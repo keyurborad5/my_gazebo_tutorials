@@ -38,7 +38,7 @@ class WalkerState {
    * @param context Reference to the WalkerContext object
    */
   virtual void execute(WalkerContext &context, float) = 0;
-};
+};  // End of class WalkerState
 
 // Concrete States
 /**
@@ -54,7 +54,7 @@ class MoveForward : public WalkerState {
    * @param min_distance Minimum distance from the obstacle
    */
   void execute(WalkerContext &context, float) override;
-};
+};  // End of class MoveForward
 /**
  * @brief Concrete class for the TurnLeft state
  *
@@ -68,7 +68,7 @@ class TurnLeft : public WalkerState {
    * @param min_distance Minimum distance from the obstacle
    */
   void execute(WalkerContext &context, float) override;
-};
+};  // End of class TurnLeft
 
 /**
  * @brief Concrete class for the TurnRight state
@@ -83,7 +83,7 @@ class TurnRight : public WalkerState {
    * @param min_distance Minimum distance from the obstacle
    */
   void execute(WalkerContext &context, float) override;
-};
+};  // End of class TurnRight
 
 /**
  * @brief Context class for the walker node
@@ -135,4 +135,4 @@ class WalkerContext : public rclcpp::Node {
   // variable to store the previous rotation direction
   bool turn_right_ = false;
   bool is_obstacle_detected_ = false;
-};
+};  // End of class WalkerContext

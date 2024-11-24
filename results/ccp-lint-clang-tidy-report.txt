@@ -1,0 +1,3 @@
+keyur@Keyur:~/enpm700/ROS2/ros2_ws$ clang-format -i --style=Google $(find . -name *.cpp -o -name *.hpp | grep -v "/build/")
+keyur@Keyur:~/enpm700/ROS2/ros2_ws$ cpplint --filter=-legal/copyright,-build/c++11,+build/c++17,-build/namespaces,-build/include_order $(find . -name *.cpp | grep -v "/build/")
+Done processing ./src/my_gazebo_tutorials/src/walker_node.cpp
