@@ -20,7 +20,8 @@ import os
 
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, ExecuteProcess, OpaqueFunction
+from launch.actions import DeclareLaunchArgument, ExecuteProcess, OpaqueFunction, TimerAction
+from launch.conditions import IfCondition
 from launch_ros.actions import Node
 from launch.actions import IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
@@ -73,7 +74,7 @@ def generate_launch_description():
 
     # Declare record_bag argument to control ros bag recording
     record_bag_arg = DeclareLaunchArgument(
-        'record_bag',
+        'enable_bag_record',
         default_value='false',  # Default to not recording if not specified
         description='Enable or disable ros bag recording'
     )
@@ -87,17 +88,28 @@ def generate_launch_description():
         output='screen',
     )
 
-     # create handle for conditional recording of ros bag
-    def conditional_rosbag_record(context):
-        if LaunchConfiguration('record_bag').perform(context) == 'true':
-            return [
-                ExecuteProcess(
-                    cmd=['ros2', 'bag', 'record', '-a', '-x', '/camera/.*'],
-                    output='screen',
-                    cwd='src/my_gazebo_tutorials/bag_files'  # Set the working directory
-                )
-            ]
-        return []
+    
+    def launch_setup(context, *args, **kwargs):
+    
+        # Define the duration for which to record the bag (~15 seconds)
+        record_duration = 15.0  # seconds
+
+        # Set up the bag recording command
+        record_bag = ExecuteProcess(
+            cmd=['ros2', 'bag', 'record', '-a', '-x', '/camera/.*'],
+            condition=IfCondition(LaunchConfiguration('enable_bag_record')),
+            output='screen',
+            cwd='src/my_gazebo_tutorials/bag_files'
+        )
+
+        # Timer to stop the recording after ~15 seconds
+        stop_recording = ExecuteProcess(
+            cmd=['pkill', '-f', 'ros2 bag record'],
+            output='screen',
+            condition=IfCondition(LaunchConfiguration('enable_bag_record'))
+        )
+
+        return [record_bag, TimerAction(period=record_duration, actions=[stop_recording])]
 
     ld = LaunchDescription()
 
@@ -108,7 +120,7 @@ def generate_launch_description():
     ld.add_action(spawn_turtlebot_cmd)
     ld.add_action(record_bag_arg)
     ld.add_action(walker_node)
-    ld.add_action(OpaqueFunction(function=conditional_rosbag_record))
+    ld.add_action(OpaqueFunction(function=launch_setup))
 
 
     return ld
