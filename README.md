@@ -66,17 +66,11 @@ The repository structure should be as follows
 ```plaintext
 ros2_ws/
 ├── src/
-│   ├── my_gazebo_tutorials
+    └── my_gazebo_tutorials
         ├── bag_files
-        │   ├── rosbag2_2024_11_24-14_57_21
-        │   │   ├── metadata.yaml
-        │   │   └── rosbag2_2024_11_24-14_57_21_0.db3
-        │   ├── rosbag2_2024_11_24-15_11_49
-        │   │   ├── metadata.yaml
-        │   │   └── rosbag2_2024_11_24-15_11_49_0.db3
-        │   └── rosbag2_2024_11_24-15_13_23
+        │   └── rosbag2_2024_11_24-14_57_21
         │       ├── metadata.yaml
-        │       └── rosbag2_2024_11_24-15_13_23_0.db3
+        │       └── rosbag2_2024_11_24-14_57_21_0.db3
         ├── CMakeLists.txt
         ├── include
         │   └── walker
@@ -85,6 +79,7 @@ ros2_ws/
         │   ├── my_bot.launch.py
         │   ├── robot_state_publisher.launch.py
         │   └── spawn_turtlebot3.launch.py
+        ├── LICENSE
         ├── models
         │   ├── turtlebot3_house
         │   │   ├── model.config
@@ -103,6 +98,8 @@ ros2_ws/
         │       └── model.sdf
         ├── package.xml
         ├── README.md
+        ├── results
+        │   └── ccp-lint-clang-tidy-report.txt
         ├── rviz
         │   └── tb3_gazebo.rviz
         ├── src
@@ -114,6 +111,7 @@ ros2_ws/
             ├── turtlebot3_house.world
             └── turtlebot3_world.world
 
+│   
 ```
 
 
