@@ -20,6 +20,8 @@ import os
 
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
+from launch.actions import DeclareLaunchArgument, ExecuteProcess, OpaqueFunction
+from launch_ros.actions import Node
 from launch.actions import IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
@@ -69,6 +71,34 @@ def generate_launch_description():
         }.items()
     )
 
+    # Declare record_bag argument to control ros bag recording
+    record_bag_arg = DeclareLaunchArgument(
+        'record_bag',
+        default_value='false',  # Default to not recording if not specified
+        description='Enable or disable ros bag recording'
+    )
+
+    
+    # create handle for walker node
+    walker_node = Node(
+        package='walker',
+        executable='walker_exec',
+        name='walker',
+        output='screen',
+    )
+
+     # create handle for conditional recording of ros bag
+    def conditional_rosbag_record(context):
+        if LaunchConfiguration('record_bag').perform(context) == 'true':
+            return [
+                ExecuteProcess(
+                    cmd=['ros2', 'bag', 'record', '-a', '-x', '/camera/.*'],
+                    output='screen',
+                    cwd='src/my_gazebo_tutorials/bag_files'  # Set the working directory
+                )
+            ]
+        return []
+
     ld = LaunchDescription()
 
     # Add the commands to the launch description
@@ -76,5 +106,9 @@ def generate_launch_description():
     ld.add_action(gzclient_cmd)
     ld.add_action(robot_state_publisher_cmd)
     ld.add_action(spawn_turtlebot_cmd)
+    ld.add_action(record_bag_arg)
+    ld.add_action(walker_node)
+    ld.add_action(OpaqueFunction(function=conditional_rosbag_record))
+
 
     return ld
